@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /**
  * Function to show a custom notification in the page
  * @param message The message to display in the notification

@@ -11,7 +11,7 @@ function createTooltipButton(imageSrc: string) {
     e.preventDefault(); // Prevent default anchor navigation
 
     // Get product name
-    let productName = 'Product Name';
+    let productName;
     const nameElement = document.querySelector('[data-testid="lblPDPDetailProductName"]');
     if (nameElement && nameElement.textContent) {
       productName = nameElement.textContent.trim();
@@ -20,7 +20,7 @@ function createTooltipButton(imageSrc: string) {
     }
 
     // Get selected size
-    let size = '';
+    let size;
     const selectedSizeElement = document.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
     if (selectedSizeElement && selectedSizeElement.textContent) {
       size = selectedSizeElement.textContent.trim();
