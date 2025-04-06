@@ -72,7 +72,9 @@ const Popup = () => {
                   )}
                 </div>
                 <div className="flex flex-col h-full justify-center">
-                  <p className="text-sm font-bold text-cpurple">{apparel.name}</p>
+                  <p className="text-xs font-bold text-cpurple whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
+                    {apparel.name}
+                  </p>
                   <p className="text-xs text-gray-500">Size: {apparel.size}</p>
                 </div>
               </div>
