@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import '@fontsource/poppins';
 import '@src/index.css';
 import Popup from '@src/Popup';
 
