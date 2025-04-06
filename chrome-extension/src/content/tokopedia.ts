@@ -2,7 +2,7 @@
 import { showCustomNotification } from './notification';
 
 // Function to create tooltip button
-function createTooltipButton(imageSrc: string) {
+function createTooltipButton(imageSrc: string, isSearchResult: boolean) {
   const button = document.createElement('img');
   button.src = chrome.runtime.getURL('logo.png');
   button.className = 'cobaju-tooltip-button';
@@ -10,22 +10,37 @@ function createTooltipButton(imageSrc: string) {
     e.stopPropagation(); // Prevent event bubbling
     e.preventDefault(); // Prevent default anchor navigation
 
-    // Get product name
     let productName;
-    const nameElement = document.querySelector('[data-testid="lblPDPDetailProductName"]');
-    if (nameElement && nameElement.textContent) {
-      productName = nameElement.textContent.trim();
-    } else {
-      productName = "Can't be found";
-    }
+    let size = "Can't be found";
 
-    // Get selected size
-    let size;
-    const selectedSizeElement = document.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
-    if (selectedSizeElement && selectedSizeElement.textContent) {
-      size = selectedSizeElement.textContent.trim();
+    if (isSearchResult) {
+      // For search result page, find the product name from the search result card
+      const container = (e.target as HTMLElement).closest('.css-5wh65g');
+      if (container) {
+        // Fix the selector by escaping special characters
+        const nameElement = container.querySelector('span[class*="_0T8-iGxMpV6NEsYEhwkqEg"]');
+        if (nameElement && nameElement.textContent) {
+          productName = nameElement.textContent.trim();
+        } else {
+          productName = "Can't be found";
+        }
+      } else {
+        productName = "Can't be found";
+      }
     } else {
-      size = "Can't be found";
+      // For product detail page, use the existing selectors
+      const nameElement = document.querySelector('[data-testid="lblPDPDetailProductName"]');
+      if (nameElement && nameElement.textContent) {
+        productName = nameElement.textContent.trim();
+      } else {
+        productName = "Can't be found";
+      }
+
+      // Get selected size (only for product detail page)
+      const selectedSizeElement = document.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
+      if (selectedSizeElement && selectedSizeElement.textContent) {
+        size = selectedSizeElement.textContent.trim();
+      }
     }
 
     // Save image to Chrome storage
@@ -64,6 +79,9 @@ function addTooltipToProductImages() {
     // Get image source
     const imageSrc = image.getAttribute('src') || '';
 
+    // Check if this is a search result image
+    const isSearchResult = image.getAttribute('alt') === 'product-image';
+
     // Special handling for product page with magnifier
     if (image.getAttribute('data-testid') === 'PDPMainImage') {
       // Find the top-level container (the button parent)
@@ -77,7 +95,7 @@ function addTooltipToProductImages() {
         }
 
         // Create and add the tooltip button with high z-index
-        const tooltipButton = createTooltipButton(imageSrc);
+        const tooltipButton = createTooltipButton(imageSrc, false);
         (tooltipButton as HTMLElement).style.zIndex = '9999'; // Ensure it stays on top
         buttonContainer.appendChild(tooltipButton);
 
@@ -114,8 +132,8 @@ function addTooltipToProductImages() {
           (imageContainer as HTMLElement).style.position = 'relative';
         }
 
-        // Create and add the tooltip button
-        const tooltipButton = createTooltipButton(imageSrc);
+        // Create and add the tooltip button with the isSearchResult flag
+        const tooltipButton = createTooltipButton(imageSrc, isSearchResult);
         imageContainer.appendChild(tooltipButton);
       }
     }
