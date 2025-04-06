@@ -4,7 +4,7 @@ import { IconHanger, IconX, IconExternalLink, IconTrashX, IconShoppingBagPlus } 
 import { useEffect, useState } from 'react';
 import { ReactNotifications } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
-import TryVirtually from './TryVirtually';
+import SelectSize from './SelectSize';
 
 // Define the apparel item type
 interface ApparelItem {
@@ -15,7 +15,7 @@ interface ApparelItem {
 
 const Popup = () => {
   const [apparelsData, setApparelsData] = useState<ApparelItem[]>([]);
-  const [currentView, setCurrentView] = useState<'list' | 'virtual'>('list');
+  const [currentView, setCurrentView] = useState<'list' | 'selectSize'>('list');
   const logoExtend = 'popup/logo-extend.svg';
 
   // Load data from Chrome storage when component mounts
@@ -51,9 +51,9 @@ const Popup = () => {
     });
   };
 
-  // Render Try Virtually view if that's the current view
-  if (currentView === 'virtual') {
-    return <TryVirtually />;
+  // Render Select Size view if that's the current view
+  if (currentView === 'selectSize') {
+    return <SelectSize />;
   }
 
   // Otherwise render the list view (default)

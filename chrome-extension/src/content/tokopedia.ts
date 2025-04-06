@@ -11,8 +11,8 @@ function createTooltipButton(imageSrc: string, imageElement: Element) {
     e.stopPropagation(); // Prevent event bubbling
     e.preventDefault(); // Prevent default anchor navigation
 
-    let productName;
-    let size = "Can't be found";
+    // Get product name
+    let productName = "Can't be found";
 
     // Check if this is a search result image
     const isSearchResult = imageElement.getAttribute('alt') === 'product-image';
@@ -26,11 +26,7 @@ function createTooltipButton(imageSrc: string, imageElement: Element) {
         const nameElement = container.querySelector('span[class*="_0T8-iGxMpV6NEsYEhwkqEg"]');
         if (nameElement && nameElement.textContent) {
           productName = nameElement.textContent.trim();
-        } else {
-          productName = "Can't be found";
         }
-      } else {
-        productName = "Can't be found";
       }
     } else if (isRecommendedProduct) {
       // For recommended products in the product page
@@ -40,107 +36,29 @@ function createTooltipButton(imageSrc: string, imageElement: Element) {
         const nameElement = productCard.querySelector('[data-testid="linkProductName"]');
         if (nameElement && nameElement.textContent) {
           productName = nameElement.textContent.trim();
-        } else {
-          productName = "Can't be found";
         }
-      } else {
-        productName = "Can't be found";
       }
     } else {
       // For product detail page, use the existing selectors
       const nameElement = document.querySelector('[data-testid="lblPDPDetailProductName"]');
       if (nameElement && nameElement.textContent) {
         productName = nameElement.textContent.trim();
-      } else {
-        productName = "Can't be found";
-      }
-
-      // Get selected size (only for product detail page)
-      // Find all variant titles to identify which one is for size
-      const variantTitles = document.querySelectorAll('[data-testid^="pdpVariantTitle"]');
-      let sizeVariantIndex = -1;
-
-      // Look for size-related keywords in the variant titles
-      variantTitles.forEach((titleElement, index) => {
-        const titleText = titleElement.textContent?.toLowerCase() || '';
-        if (titleText.includes('ukuran') || titleText.includes('size')) {
-          sizeVariantIndex = index;
-        }
-      });
-
-      if (sizeVariantIndex !== -1) {
-        // Find the selected size button within the correct variant section
-        const sizeSection = document
-          .querySelector(`[data-testid="pdpVariantTitle#${sizeVariantIndex}"]`)
-          ?.closest('.css-1b2d3hk');
-        if (sizeSection) {
-          const selectedSizeElement = sizeSection.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
-          if (selectedSizeElement && selectedSizeElement.textContent) {
-            size = selectedSizeElement.textContent.trim();
-          }
-        }
-      } else {
-        // Fallback to the original method if no size variant is found
-        const selectedSizeElement = document.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
-        if (selectedSizeElement && selectedSizeElement.textContent) {
-          size = selectedSizeElement.textContent.trim();
-        }
       }
     }
 
-    // Save image to Chrome storage
-    chrome.storage.sync.get(['apparelsData'], result => {
-      const existingData = result.apparelsData || [];
-      const newItem = {
-        imgSrc: imageSrc,
-        name: productName,
-        size: size,
-      };
-
-      const updatedData = [...existingData, newItem];
-      chrome.storage.sync.set({ apparelsData: updatedData }, () => {
-        showCustomNotification('Product added to your items!');
-      });
-    });
+    // Set temporary product data and open the SelectSize page
+    chrome.storage.sync.set(
+      {
+        tempProductData: { imgSrc: imageSrc, name: productName },
+        popupView: 'selectSize',
+      },
+      () => {
+        // Open the popup programmatically
+        chrome.runtime.sendMessage({ action: 'openPopup' });
+      },
+    );
 
     return false; // Extra safeguard for older browsers
-  });
-
-  return button;
-}
-
-// Function to create the Try Virtually button
-function createTryVirtuallyButton(imageSrc: string, imageElement: Element) {
-  const button = document.createElement('div');
-  button.className = 'cobaju-try-virtually-button';
-  button.textContent = 'Try this item virtually';
-  button.style.backgroundColor = '#3a3166';
-  button.style.color = 'white';
-  button.style.padding = '8px 12px';
-  button.style.borderRadius = '4px';
-  button.style.fontSize = '12px';
-  button.style.cursor = 'pointer';
-  button.style.fontWeight = 'bold';
-  button.style.position = 'absolute';
-  button.style.top = '45px';
-  button.style.left = '50%';
-  button.style.transform = 'translateX(-50%)';
-  // button.style.zIndex = '9998';
-  button.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-  button.style.textAlign = 'center';
-  button.style.whiteSpace = 'nowrap';
-
-  button.addEventListener('click', e => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    // Set the view state to 'virtual' and open the popup
-    chrome.storage.sync.set({ popupView: 'virtual' }, () => {
-      // Open the popup programmatically
-      chrome.runtime.sendMessage({ action: 'openPopup' });
-    });
-
-    return false;
   });
 
   return button;
@@ -178,12 +96,6 @@ function addTooltipToProductImages() {
         (tooltipButton as HTMLElement).style.zIndex = '9999'; // Ensure it stays on top
         buttonContainer.appendChild(tooltipButton);
 
-        // Create and add the Try Virtually button
-        if (!buttonContainer.querySelector('.cobaju-try-virtually-button')) {
-          const tryVirtuallyButton = createTryVirtuallyButton(imageSrc, image);
-          buttonContainer.appendChild(tryVirtuallyButton);
-        }
-
         // Disable the magnifier feature
         const magnifier = buttonContainer.querySelector('.magnifier');
         if (magnifier) {
@@ -220,12 +132,6 @@ function addTooltipToProductImages() {
         // Create and add the tooltip button
         const tooltipButton = createTooltipButton(imageSrc, image);
         imageContainer.appendChild(tooltipButton);
-
-        // Create and add the Try Virtually button
-        if (!imageContainer.querySelector('.cobaju-try-virtually-button')) {
-          const tryVirtuallyButton = createTryVirtuallyButton(imageSrc, image);
-          imageContainer.appendChild(tryVirtuallyButton);
-        }
       }
     }
   });
