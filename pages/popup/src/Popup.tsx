@@ -1,33 +1,45 @@
 import '@src/Popup.css';
 import { withErrorBoundary, withSuspense } from '@extension/shared';
 import { IconHanger, IconX, IconExternalLink, IconTrashX, IconShoppingBagPlus } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
 
-const apparelsData = [
-  {
-    name: 'T-Shirt',
-    size: 'M',
-  },
-  {
-    name: 'Jeans',
-    size: 'L',
-  },
-  {
-    name: 'Jacket',
-    size: 'XL',
-  },
-  {
-    name: 'Shoes',
-    size: '42',
-  },
-  {
-    name: 'Hat',
-    size: 'M',
-  },
-];
+// Define the apparel item type
+interface ApparelItem {
+  imgSrc: string;
+  name: string;
+  size: string;
+}
 
 const Popup = () => {
-  // const logo = 'popup/logo.svg';
+  const [apparelsData, setApparelsData] = useState<ApparelItem[]>([]);
   const logoExtend = 'popup/logo-extend.svg';
+
+  // Load data from Chrome storage when component mounts
+  useEffect(() => {
+    chrome.storage.sync.get(['apparelsData'], result => {
+      if (result.apparelsData) {
+        setApparelsData(result.apparelsData);
+      }
+    });
+
+    // Listen for changes to storage
+    chrome.storage.onChanged.addListener(changes => {
+      if (changes.apparelsData) {
+        setApparelsData(changes.apparelsData.newValue || []);
+      }
+    });
+  }, []);
+
+  // Handle removing an item
+  const handleRemoveItem = (index: number) => {
+    const updatedApparels = [...apparelsData];
+    updatedApparels.splice(index, 1);
+
+    // Update storage
+    chrome.storage.sync.set({ apparelsData: updatedApparels }, () => {
+      setApparelsData(updatedApparels);
+    });
+  };
 
   return (
     <div className="App bg-cwhite text-cblack flex flex-col w-full text-base font-poppins pt-[80px]">
@@ -50,14 +62,18 @@ const Popup = () => {
               key={index}
               className="flex justify-between items-center w-full bg-white border-2 border-cgrey rounded-lg p-2 h-20">
               <div className="flex flex-row space-x-2 h-full">
-                <div className="aspect-square h-full rounded-md overflow-hidden bg-black"></div>
+                <div className="aspect-square h-full rounded-md overflow-hidden bg-black">
+                  {apparel.imgSrc && (
+                    <img src={apparel.imgSrc} alt={apparel.name} className="h-full w-full object-cover" />
+                  )}
+                </div>
                 <div className="flex flex-col h-full justify-center">
                   <p className="text-sm font-bold text-cpurple">{apparel.name}</p>
                   <p className="text-xs text-gray-500">Size: {apparel.size}</p>
                 </div>
               </div>
 
-              <button className="flex items-center space-x-0.5 text-red-500">
+              <button className="flex items-center space-x-0.5 text-red-500" onClick={() => handleRemoveItem(index)}>
                 <IconTrashX size={16} strokeWidth={2} />
                 <span className="text-xs underline">Remove</span>
               </button>

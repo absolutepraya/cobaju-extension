@@ -1,14 +1,29 @@
 /* eslint-disable prettier/prettier */
 
 // Function to create tooltip button
-function createTooltipButton() {
+function createTooltipButton(imageSrc: string) {
   const button = document.createElement('img');
   button.src = chrome.runtime.getURL('logo.png');
   button.className = 'cobaju-tooltip-button';
   button.addEventListener('click', e => {
     e.stopPropagation(); // Prevent event bubbling
     e.preventDefault(); // Prevent default anchor navigation
-    alert('Cobaju tooltip button clicked!');
+
+    // Save image to Chrome storage
+    chrome.storage.sync.get(['apparelsData'], result => {
+      const existingData = result.apparelsData || [];
+      const newItem = {
+        imgSrc: imageSrc,
+        name: 'Product Name', // Placeholder
+        size: 'M', // Placeholder
+      };
+
+      const updatedData = [...existingData, newItem];
+      chrome.storage.sync.set({ apparelsData: updatedData }, () => {
+        alert('Product added to your items!');
+      });
+    });
+
     return false; // Extra safeguard for older browsers
   });
 
@@ -27,6 +42,9 @@ function addTooltipToProductImages() {
 
   // Add tooltip button to each image
   allProductImages.forEach(image => {
+    // Get image source
+    const imageSrc = image.getAttribute('src') || '';
+
     // Special handling for product page with magnifier
     if (image.getAttribute('data-testid') === 'PDPMainImage') {
       // Find the top-level container (the button parent)
@@ -40,7 +58,7 @@ function addTooltipToProductImages() {
         }
 
         // Create and add the tooltip button with high z-index
-        const tooltipButton = createTooltipButton();
+        const tooltipButton = createTooltipButton(imageSrc);
         (tooltipButton as HTMLElement).style.zIndex = '9999'; // Ensure it stays on top
         buttonContainer.appendChild(tooltipButton);
 
@@ -78,7 +96,7 @@ function addTooltipToProductImages() {
         }
 
         // Create and add the tooltip button
-        const tooltipButton = createTooltipButton();
+        const tooltipButton = createTooltipButton(imageSrc);
         imageContainer.appendChild(tooltipButton);
       }
     }
