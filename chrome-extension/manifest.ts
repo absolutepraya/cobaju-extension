@@ -22,10 +22,16 @@ const manifest = {
   },
   action: {
     default_popup: 'popup/index.html',
-    default_icon: 'logo.svg',
+    default_icon: {
+      16: 'logo.png',
+      48: 'logo.png',
+      128: 'logo.png',
+    },
   },
   icons: {
-    128: 'logo.svg',
+    16: 'logo.png',
+    48: 'logo.png',
+    128: 'logo.png',
   },
   web_accessible_resources: [
     {

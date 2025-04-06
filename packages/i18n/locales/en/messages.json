@@ -1,11 +1,11 @@
 {
   "extensionDescription": {
-    "description": "Extension description",
-    "message": "Chrome extension boilerplate developed with Vite, React and Typescript"
+    "description": "Cobaju",
+    "message": "Cobaju"
   },
   "extensionName": {
-    "description": "Extension name",
-    "message": "Chrome extension boilerplate"
+    "description": "Cobaju",
+    "message": "Cobaju"
   },
   "toggleTheme": {
     "message": "Toggle theme"
