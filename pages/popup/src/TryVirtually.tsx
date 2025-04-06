@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { withErrorBoundary, withSuspense } from '@extension/shared';
 import { IconX } from '@tabler/icons-react';
 
