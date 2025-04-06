@@ -2,7 +2,7 @@
 import { showCustomNotification } from './notification';
 
 // Function to create tooltip button
-function createTooltipButton(imageSrc: string, imageElement: HTMLImageElement) {
+function createTooltipButton(imageSrc: string, imageElement: Element) {
   const button = document.createElement('img');
   button.src = chrome.runtime.getURL('logo.png');
   button.className = 'cobaju-tooltip-button';
