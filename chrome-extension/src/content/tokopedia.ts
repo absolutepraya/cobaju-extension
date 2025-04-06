@@ -55,9 +55,35 @@ function createTooltipButton(imageSrc: string, imageElement: Element) {
       }
 
       // Get selected size (only for product detail page)
-      const selectedSizeElement = document.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
-      if (selectedSizeElement && selectedSizeElement.textContent) {
-        size = selectedSizeElement.textContent.trim();
+      // Find all variant titles to identify which one is for size
+      const variantTitles = document.querySelectorAll('[data-testid^="pdpVariantTitle"]');
+      let sizeVariantIndex = -1;
+
+      // Look for size-related keywords in the variant titles
+      variantTitles.forEach((titleElement, index) => {
+        const titleText = titleElement.textContent?.toLowerCase() || '';
+        if (titleText.includes('ukuran') || titleText.includes('size')) {
+          sizeVariantIndex = index;
+        }
+      });
+
+      if (sizeVariantIndex !== -1) {
+        // Find the selected size button within the correct variant section
+        const sizeSection = document
+          .querySelector(`[data-testid="pdpVariantTitle#${sizeVariantIndex}"]`)
+          ?.closest('.css-1b2d3hk');
+        if (sizeSection) {
+          const selectedSizeElement = sizeSection.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
+          if (selectedSizeElement && selectedSizeElement.textContent) {
+            size = selectedSizeElement.textContent.trim();
+          }
+        }
+      } else {
+        // Fallback to the original method if no size variant is found
+        const selectedSizeElement = document.querySelector('[data-testid="btnVariantChipActiveSelected"] button');
+        if (selectedSizeElement && selectedSizeElement.textContent) {
+          size = selectedSizeElement.textContent.trim();
+        }
       }
     }
 
