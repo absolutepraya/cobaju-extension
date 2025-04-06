@@ -2,6 +2,8 @@ import '@src/Popup.css';
 import { withErrorBoundary, withSuspense } from '@extension/shared';
 import { IconHanger, IconX, IconExternalLink, IconTrashX, IconShoppingBagPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
+import { ReactNotifications } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
 
 // Define the apparel item type
 interface ApparelItem {
@@ -43,6 +45,8 @@ const Popup = () => {
 
   return (
     <div className="App bg-cwhite text-cblack flex flex-col w-full text-base font-poppins pt-[80px]">
+      <ReactNotifications />
+
       <div className="border-b-2 bg-white border-b-cgrey flex w-full items-center justify-center pb-3 pt-4 fixed top-0 left-0">
         <img src={chrome.runtime.getURL(logoExtend)} alt="logo" className="h-[2.4rem]" />
         <button onClick={() => window.close()}>
