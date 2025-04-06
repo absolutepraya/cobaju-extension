@@ -9,6 +9,10 @@
   transition: opacity 0.1s ease;
   /* z-index: 9999; Ensure button is always on top  */
   pointer-events: auto !important; /* Force clickability */
+  border-radius: 3px !important; /* Set consistent rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add subtle shadow */
+  object-fit: contain !important; /* Ensure image fits properly */
+  box-sizing: content-box !important; /* Prevent size issues */
 }
 
 .cobaju-tooltip-button:hover {
