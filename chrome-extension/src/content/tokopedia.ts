@@ -6,8 +6,10 @@ function createTooltipButton() {
   button.src = chrome.runtime.getURL('logo.png');
   button.className = 'cobaju-tooltip-button';
   button.addEventListener('click', e => {
-    e.stopPropagation(); // Prevent image click event
+    e.stopPropagation(); // Prevent event bubbling
+    e.preventDefault(); // Prevent default anchor navigation
     alert('Cobaju tooltip button clicked!');
+    return false; // Extra safeguard for older browsers
   });
 
   return button;
