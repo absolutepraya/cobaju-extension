@@ -7,6 +7,8 @@
   opacity: 0.7;
   cursor: pointer;
   transition: opacity 0.1s ease;
+  /* z-index: 9999; Ensure button is always on top  */
+  pointer-events: auto !important; /* Force clickability */
 }
 
 .cobaju-tooltip-button:hover {
