@@ -1,5 +1,5 @@
 import { withErrorBoundary, withSuspense } from '@extension/shared';
-import { IconX, IconShirt, IconPalette, IconCheck } from '@tabler/icons-react';
+import { IconX, IconShirt, IconPalette, IconCheck, IconHanger } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { ReactNotifications } from 'react-notifications-component';
 
@@ -136,9 +136,10 @@ const SelectSize = () => {
 
       <div className="w-full mt-auto text-base text-white flex items-center text-center justify-center p-4 pt-0">
         <button
-          className="bg-cpurpledark w-full flex flex-row items-center text-center justify-center rounded-lg p-2"
+          className="bg-cpurpledark w-full flex flex-row items-center text-center justify-center rounded-lg p-2 gap-1"
           onClick={handleAddItem}>
-          <p>Add to Apparels</p>
+          <p>Add item</p>
+          <IconHanger size={20} strokeWidth={2} className="" />
         </button>
       </div>
     </div>
