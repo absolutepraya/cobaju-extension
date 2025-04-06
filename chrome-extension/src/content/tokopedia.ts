@@ -2,7 +2,7 @@
 import { showCustomNotification } from './notification';
 
 // Function to create tooltip button
-function createTooltipButton(imageSrc: string, isSearchResult: boolean) {
+function createTooltipButton(imageSrc: string, imageElement: HTMLImageElement) {
   const button = document.createElement('img');
   button.src = chrome.runtime.getURL('logo.png');
   button.className = 'cobaju-tooltip-button';
@@ -13,12 +13,30 @@ function createTooltipButton(imageSrc: string, isSearchResult: boolean) {
     let productName;
     let size = "Can't be found";
 
+    // Check if this is a search result image
+    const isSearchResult = imageElement.getAttribute('alt') === 'product-image';
+    // Check if this is a recommended product
+    const isRecommendedProduct = imageElement.getAttribute('data-testid')?.startsWith('imgProduct');
+
     if (isSearchResult) {
       // For search result page, find the product name from the search result card
       const container = (e.target as HTMLElement).closest('.css-5wh65g');
       if (container) {
-        // Fix the selector by escaping special characters
         const nameElement = container.querySelector('span[class*="_0T8-iGxMpV6NEsYEhwkqEg"]');
+        if (nameElement && nameElement.textContent) {
+          productName = nameElement.textContent.trim();
+        } else {
+          productName = "Can't be found";
+        }
+      } else {
+        productName = "Can't be found";
+      }
+    } else if (isRecommendedProduct) {
+      // For recommended products in the product page
+      // Navigate up to find the container and then find the product name element
+      const productCard = imageElement.closest('[data-testid="master-product-card"]');
+      if (productCard) {
+        const nameElement = productCard.querySelector('[data-testid="linkProductName"]');
         if (nameElement && nameElement.textContent) {
           productName = nameElement.textContent.trim();
         } else {
@@ -79,9 +97,6 @@ function addTooltipToProductImages() {
     // Get image source
     const imageSrc = image.getAttribute('src') || '';
 
-    // Check if this is a search result image
-    const isSearchResult = image.getAttribute('alt') === 'product-image';
-
     // Special handling for product page with magnifier
     if (image.getAttribute('data-testid') === 'PDPMainImage') {
       // Find the top-level container (the button parent)
@@ -95,7 +110,7 @@ function addTooltipToProductImages() {
         }
 
         // Create and add the tooltip button with high z-index
-        const tooltipButton = createTooltipButton(imageSrc, false);
+        const tooltipButton = createTooltipButton(imageSrc, image);
         (tooltipButton as HTMLElement).style.zIndex = '9999'; // Ensure it stays on top
         buttonContainer.appendChild(tooltipButton);
 
@@ -132,8 +147,8 @@ function addTooltipToProductImages() {
           (imageContainer as HTMLElement).style.position = 'relative';
         }
 
-        // Create and add the tooltip button with the isSearchResult flag
-        const tooltipButton = createTooltipButton(imageSrc, isSearchResult);
+        // Create and add the tooltip button
+        const tooltipButton = createTooltipButton(imageSrc, image);
         imageContainer.appendChild(tooltipButton);
       }
     }
