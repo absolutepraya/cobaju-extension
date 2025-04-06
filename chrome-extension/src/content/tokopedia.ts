@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 // Function to create tooltip button
 function createTooltipButton(imageSrc: string) {
   const button = document.createElement('img');
