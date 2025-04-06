@@ -51,6 +51,11 @@ const Popup = () => {
     });
   };
 
+  // Handle opening the wardrobe in a new tab
+  const handleOpenWardrobe = () => {
+    chrome.tabs.create({ url: 'https://cobaju.vercel.app/wardrobe' });
+  };
+
   // Render Select Size view if that's the current view
   if (currentView === 'selectSize') {
     return <SelectSize />;
@@ -129,13 +134,12 @@ const Popup = () => {
       <div className="w-full mt-4 text-base text-white flex items-center text-center justify-center">
         <button
           className={`bg-cpurpledark w-[80%] flex flex-row items-center text-center justify-center rounded-lg p-2 ${apparelsData.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={apparelsData.length === 0}>
+          disabled={apparelsData.length === 0}
+          onClick={handleOpenWardrobe}>
           <p>Go to Wardrobe</p>
           <IconExternalLink size={20} strokeWidth={2} className="inline-block ml-2" />
         </button>
       </div>
-
-      <div className="h-4 w-4 bg-cwhite text-sm">&nbsp;</div>
     </div>
   );
 };
