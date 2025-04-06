@@ -1,7 +1,8 @@
+// Updated tokopedia.ts file
 // Import the notification function
 import { showCustomNotification } from './notification';
 
-// Function to create tooltip button
+// Function to create tooltip button for adding to items
 function createTooltipButton(imageSrc: string, imageElement: Element) {
   const button = document.createElement('img');
   button.src = chrome.runtime.getURL('logo.png');
@@ -108,6 +109,43 @@ function createTooltipButton(imageSrc: string, imageElement: Element) {
   return button;
 }
 
+// Function to create the Try Virtually button
+function createTryVirtuallyButton(imageSrc: string, imageElement: Element) {
+  const button = document.createElement('div');
+  button.className = 'cobaju-try-virtually-button';
+  button.textContent = 'Try this item virtually';
+  button.style.backgroundColor = '#3a3166';
+  button.style.color = 'white';
+  button.style.padding = '8px 12px';
+  button.style.borderRadius = '4px';
+  button.style.fontSize = '12px';
+  button.style.cursor = 'pointer';
+  button.style.fontWeight = 'bold';
+  button.style.position = 'absolute';
+  button.style.top = '45px';
+  button.style.left = '50%';
+  button.style.transform = 'translateX(-50%)';
+  // button.style.zIndex = '9998';
+  button.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+  button.style.textAlign = 'center';
+  button.style.whiteSpace = 'nowrap';
+
+  button.addEventListener('click', e => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    // Set the view state to 'virtual' and open the popup
+    chrome.storage.sync.set({ popupView: 'virtual' }, () => {
+      // Open the popup programmatically
+      chrome.runtime.sendMessage({ action: 'openPopup' });
+    });
+
+    return false;
+  });
+
+  return button;
+}
+
 // Function to add tooltip button to product images
 function addTooltipToProductImages() {
   // Combine both selectors
@@ -139,6 +177,12 @@ function addTooltipToProductImages() {
         const tooltipButton = createTooltipButton(imageSrc, image);
         (tooltipButton as HTMLElement).style.zIndex = '9999'; // Ensure it stays on top
         buttonContainer.appendChild(tooltipButton);
+
+        // Create and add the Try Virtually button
+        if (!buttonContainer.querySelector('.cobaju-try-virtually-button')) {
+          const tryVirtuallyButton = createTryVirtuallyButton(imageSrc, image);
+          buttonContainer.appendChild(tryVirtuallyButton);
+        }
 
         // Disable the magnifier feature
         const magnifier = buttonContainer.querySelector('.magnifier');
@@ -176,6 +220,12 @@ function addTooltipToProductImages() {
         // Create and add the tooltip button
         const tooltipButton = createTooltipButton(imageSrc, image);
         imageContainer.appendChild(tooltipButton);
+
+        // Create and add the Try Virtually button
+        if (!imageContainer.querySelector('.cobaju-try-virtually-button')) {
+          const tryVirtuallyButton = createTryVirtuallyButton(imageSrc, image);
+          imageContainer.appendChild(tryVirtuallyButton);
+        }
       }
     }
   });

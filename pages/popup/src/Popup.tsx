@@ -4,6 +4,7 @@ import { IconHanger, IconX, IconExternalLink, IconTrashX, IconShoppingBagPlus } 
 import { useEffect, useState } from 'react';
 import { ReactNotifications } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
+import TryVirtually from './TryVirtually';
 
 // Define the apparel item type
 interface ApparelItem {
@@ -14,13 +15,17 @@ interface ApparelItem {
 
 const Popup = () => {
   const [apparelsData, setApparelsData] = useState<ApparelItem[]>([]);
+  const [currentView, setCurrentView] = useState<'list' | 'virtual'>('list');
   const logoExtend = 'popup/logo-extend.svg';
 
   // Load data from Chrome storage when component mounts
   useEffect(() => {
-    chrome.storage.sync.get(['apparelsData'], result => {
+    chrome.storage.sync.get(['apparelsData', 'popupView'], result => {
       if (result.apparelsData) {
         setApparelsData(result.apparelsData);
+      }
+      if (result.popupView) {
+        setCurrentView(result.popupView);
       }
     });
 
@@ -28,6 +33,9 @@ const Popup = () => {
     chrome.storage.onChanged.addListener(changes => {
       if (changes.apparelsData) {
         setApparelsData(changes.apparelsData.newValue || []);
+      }
+      if (changes.popupView) {
+        setCurrentView(changes.popupView.newValue || 'list');
       }
     });
   }, []);
@@ -43,6 +51,12 @@ const Popup = () => {
     });
   };
 
+  // Render Try Virtually view if that's the current view
+  if (currentView === 'virtual') {
+    return <TryVirtually />;
+  }
+
+  // Otherwise render the list view (default)
   return (
     <div className="App bg-cwhite text-cblack flex flex-col w-full text-base font-poppins pt-[80px]">
       <ReactNotifications />
