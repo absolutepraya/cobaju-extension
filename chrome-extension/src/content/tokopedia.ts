@@ -38,7 +38,7 @@ function showCustomNotification(message: string) {
     notificationContainer.id = 'cobaju-notification-container';
     notificationContainer.style.position = 'fixed';
     notificationContainer.style.bottom = '20px';
-    notificationContainer.style.right = '20px';
+    notificationContainer.style.left = '20px';
     notificationContainer.style.zIndex = '9999';
     document.body.appendChild(notificationContainer);
   }
@@ -46,7 +46,7 @@ function showCustomNotification(message: string) {
   // Create notification element
   const notification = document.createElement('div');
   notification.className = 'cobaju-notification';
-  notification.style.backgroundColor = '#4CAF50';
+  notification.style.backgroundColor = '#4b2aa0';
   notification.style.color = 'white';
   notification.style.padding = '15px 20px';
   notification.style.marginBottom = '10px';
