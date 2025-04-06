@@ -22,14 +22,14 @@ const manifest = {
   },
   action: {
     default_popup: 'popup/index.html',
-    default_icon: 'icon-34.png',
+    default_icon: 'logo.svg',
   },
   icons: {
-    128: 'icon-128.png',
+    128: 'logo.svg',
   },
   web_accessible_resources: [
     {
-      resources: ['*.js', '*.css', '*.svg', 'icon-128.png', 'icon-34.png'],
+      resources: ['*.js', '*.css', '*.svg', 'logo.svg'],
       matches: ['*://*/*'],
     },
   ],
