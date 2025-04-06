@@ -33,9 +33,16 @@ const manifest = {
     48: 'logo.png',
     128: 'logo.png',
   },
+  content_scripts: [
+    {
+      matches: ['*://*.tokopedia.com/*'],
+      js: ['content/tokopedia.js'],
+      css: ['content.css'],
+    },
+  ],
   web_accessible_resources: [
     {
-      resources: ['*.js', '*.css', '*.svg', 'logo.svg'],
+      resources: ['*.js', '*.css', '*.svg', 'logo.svg', 'logo.png'],
       matches: ['*://*/*'],
     },
   ],

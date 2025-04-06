@@ -37,7 +37,10 @@ export default defineConfig({
       name: 'BackgroundScript',
       fileName: 'background',
       formats: ['es'],
-      entry: resolve(srcDir, 'background', 'index.ts'),
+      entry: {
+        background: resolve(srcDir, 'background', 'index.ts'),
+        'content/tokopedia': resolve(srcDir, 'content', 'tokopedia.ts'),
+      },
     },
     outDir,
     emptyOutDir: false,
@@ -47,6 +50,9 @@ export default defineConfig({
     watch: watchOption,
     rollupOptions: {
       external: ['chrome'],
+      output: {
+        entryFileNames: '[name].js',
+      },
     },
   },
 });
